@@ -1,2 +1,5 @@
-node_modules
+node_modules.tar.gz
+/build
+/node_modules
 .env
+*.http
