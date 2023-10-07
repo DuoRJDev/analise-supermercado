@@ -32,11 +32,11 @@ export default {
       },
       state: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       region: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
     });
   },

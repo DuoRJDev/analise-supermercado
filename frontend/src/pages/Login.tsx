@@ -1,25 +1,25 @@
 import React, { useState, type ChangeEvent, type FormEvent } from 'react';
 import axios from 'axios';
 
-function Login () {
+function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const newEmail = e.target.value;
     setEmail(newEmail);
     validateEmail(newEmail);
   };
 
-  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const newPassword = e.target.value;
     setPassword(newPassword);
     validatePassword(newPassword);
   };
 
-  const validateEmail = (newEmail: string) => {
+  const validateEmail = (newEmail: string): void => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const isValidEmail = emailRegex.test(newEmail);
 
@@ -30,7 +30,7 @@ function Login () {
     }
   };
 
-  const validatePassword = (newPassword: string) => {
+  const validatePassword = (newPassword: string): void => {
     const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9]).{8,16}$/;
     const isValidPassword = passwordRegex.test(newPassword);
 
@@ -41,7 +41,7 @@ function Login () {
     }
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     if (!emailError && !passwordError) {
       try {
@@ -65,38 +65,38 @@ function Login () {
   };
 
   return (
-        <div>
-            <h2>Tela de Login</h2>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="email">E-mail:</label>
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={email}
-                    onChange={handleEmailChange}
-                    data-testid="email-input"
-                    required
-                />
-                <br />
-                {emailError && <p style={{ color: 'red' }}>{emailError}</p>}
-                <label htmlFor="password">Senha:</label>
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    value={password}
-                    onChange={handlePasswordChange}
-                    data-testid="password-input"
-                    required
-                />
-                <br />
-                {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
-                <button type="submit" data-testid="login-submit-btn" disabled={!!emailError || !!passwordError}>
-                    Entrar
-                </button>
-            </form>
-        </div>
+    <div>
+      <h2>Tela de Login</h2>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="email">E-mail:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value={email}
+          onChange={handleEmailChange}
+          data-testid="email-input"
+          required
+        />
+        <br />
+        {emailError && <p style={{ color: 'red' }}>{emailError}</p>}
+        <label htmlFor="password">Senha:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          value={password}
+          onChange={handlePasswordChange}
+          data-testid="password-input"
+          required
+        />
+        <br />
+        {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
+        <button type="submit" data-testid="login-submit-btn" disabled={!!emailError || !!passwordError}>
+          Entrar
+        </button>
+      </form>
+    </div>
   );
 }
 
