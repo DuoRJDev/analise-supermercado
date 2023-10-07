@@ -33,7 +33,7 @@ Users.init({
   region: { type: DataTypes.INTEGER, allowNull: true },
 }, {
   sequelize: db,
-  timestamps: false,
+  timestamps: true,
   underscored: false,
 });
 

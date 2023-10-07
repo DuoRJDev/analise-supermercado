@@ -30,8 +30,8 @@ Sales.init({
   product: { type: DataTypes.INTEGER, allowNull: false },
   date: { type: DataTypes.DATE, allowNull: false },
   price: { type: DataTypes.DECIMAL, allowNull: false },
-  market: { type: DataTypes.INTEGER, allowNull: true },
-  state: { type: DataTypes.INTEGER, allowNull: true },
+  market: { type: DataTypes.INTEGER, allowNull: false },
+  state: { type: DataTypes.INTEGER, allowNull: false },
   region: { type: DataTypes.INTEGER, allowNull: true },
 }, {
   sequelize: db,
