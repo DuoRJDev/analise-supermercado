@@ -1,0 +1,14 @@
+{
+  "name": "analise-supermercado",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "install:apps": "cd ./backend && npm install && cd ./frontend && npm install",
+    "compose:up": "docker-compose up -d --build",
+    "compose:down": "docker-compose down --remove-orphans",
+    "logs": "docker-compose logs -f"
+  },
+  "keywords": [],
+  "author": "DuoRJDev - Joblanco && YagoCalomino"
+}
