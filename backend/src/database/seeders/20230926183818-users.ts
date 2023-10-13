@@ -11,6 +11,8 @@ export default {
           email: 'admin@admin.com',
           password: 'Admin!23',
           role: 1,
+          state: 1,
+          region: null,
         }
       ],
       {},
