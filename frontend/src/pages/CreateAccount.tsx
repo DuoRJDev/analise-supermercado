@@ -9,8 +9,8 @@ function CreateAccount() {
   console.log(globalState);
   console.log(states);
   const dispatch = useDispatch();
-  dispatch(actionFillStates(states));
-  // dispatch(actionAccountCreation({ name: 'TESTE', surname: 'TESTE', email: 'TESTE', password: 'TESTE', state: '', region: '' }));
+  // dispatch(actionFillStates(states));
+  dispatch(actionAccountCreation({ name: 'TESTE', surname: 'TESTE', email: 'TESTE', password: 'TESTE', state: '', region: '' }));
   return (
     <div>
       <label htmlFor="name">Nome:</label>
