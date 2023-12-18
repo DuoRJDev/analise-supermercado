@@ -95,6 +95,9 @@ function Login() {
         <button type="submit" data-testid="login-submit-btn" disabled={!!emailError || !!passwordError}>
           Entrar
         </button>
+        <button type="submit" data-testid="create-account-submit-btn">
+          Criar Conta
+        </button>
       </form>
     </div>
   );
