@@ -5,12 +5,16 @@ import locations from '../helpers/locations';
 import { actionAccountCreation, actionFillStates } from '../redux/actions';
 import type ILocations from '../interfaces/Locations';
 import type IGlobalState from '../interfaces/GlobalState';
+import type ICreateAccount from '../interfaces/CreateAccount';
+import { createAccount, setToken } from '../helpers/connection';
+import { Navigate } from 'react-router-dom';
 
 function CreateAccount() {
   const [account, setAccount] = useState({ name: '', surname: '', email: '', password: '', repeatedPassword: '', state: 'Acre' });
   const [buttonToggle, setButtonToggle] = useState(true);
   // Estado para gerenciar os alertas de preenchimento
   const [validInput, setValidInput] = useState({ name: false, surname: false, email: false, password: false, repeatedPassword: false });
+  const [createSuccesfull, setCreateSuccesfull] = useState(false);
   // Redux
   const globalState: IGlobalState = useSelector((state) => state) as IGlobalState;
   const dispatch = useDispatch();
@@ -24,7 +28,7 @@ function CreateAccount() {
     const filledInputs = Object.keys(account).every(key => account[key].length > 0);
     // Evitar chamadas desnecessárias
     if (name !== 'state') validateInputs(name, value);
-    setButtonToggle(!filledInputs);
+    setButtonToggle(!filledInputs && Object.values(validInput).every(bool => bool));
   };
   // Função para validar os inputs no global state
   const validateInputs = (name: string, value: string): void => {
@@ -59,7 +63,7 @@ function CreateAccount() {
     }
   };
 
-  const submitAccount = (): void => {
+  const submitAccount = async (): Promise<void> => {
     let region: string | undefined = globalState.locationsApi.states.find((state) => state.nome === account.state)?.regiao.nome;
     if (region === undefined) region = '';
     dispatch(actionAccountCreation({
@@ -69,6 +73,26 @@ function CreateAccount() {
       state: account.state,
       region
     }));
+    const bodyData: ICreateAccount = {
+      name: account.name,
+      surname: account.surname,
+      email: account.email,
+      password: account.password,
+      state: account.state,
+      region
+    };
+    try {
+      const { token, role } = await createAccount(bodyData);
+
+      setToken(token);
+
+      localStorage.setItem('token', token);
+      localStorage.setItem('role', role);
+
+      setCreateSuccesfull(true);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -78,6 +102,9 @@ function CreateAccount() {
     };
     fetch();
   }, []);
+
+  // Depois que criada a conta é feito o redirecionamento para a página Home
+  if (createSuccesfull) return <Navigate to="/login" />;
 
   return (
     <div>
@@ -99,7 +126,6 @@ function CreateAccount() {
         onChange={({ target }) => { onChangeInput(target); }}
         value={account.surname} />
       {validInput.surname ? <FiCheck /> : <FiAlertTriangle />}
-      {/* State para verificar quando o email é válido e fazer uma interação com o usuário com popup e check verde */}
       <label htmlFor="email">E-mail:</label>
       <input
         type="email"
