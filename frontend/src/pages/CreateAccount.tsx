@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { FiCheck, FiAlertTriangle } from 'react-icons/fi';
 import { useDispatch, useSelector } from 'react-redux';
 import locations from '../helpers/locations';
 import { actionAccountCreation, actionFillStates } from '../redux/actions';
@@ -8,27 +9,57 @@ import type IGlobalState from '../interfaces/GlobalState';
 function CreateAccount() {
   const [account, setAccount] = useState({ name: '', surname: '', email: '', password: '', repeatedPassword: '', state: 'Acre' });
   const [buttonToggle, setButtonToggle] = useState(true);
+  // Estado para gerenciar os alertas de preenchimento
+  const [validInput, setValidInput] = useState({ name: false, surname: false, email: false, password: false, repeatedPassword: false });
   // Redux
   const globalState: IGlobalState = useSelector((state) => state) as IGlobalState;
   const dispatch = useDispatch();
   // Validações
-  const emailRegex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i;
+  const emailRegex = /^[a-z0-9.-_]+@[a-z0-9.-]+\.[a-z]+$/i;
   const specialCharsRegex = /[`!@#$%^&*()_+=[\]{};':"\\|,.<>/?~]/;
+  const numberRegex = /[^0-9]/;
 
   const onChangeInput = ({ name, value }: { name: string, value: string }): void => {
     setAccount({ ...account, [name]: value });
-    // const filledInputs = account.name.length > 0 && account.surname.length > 0 && account.email.length > 0 && account.password.length > 0 && account.repeatedPassword.length > 0 && account.state.length > 0;
     const filledInputs = Object.keys(account).every(key => account[key].length > 0);
+    // Evitar chamadas desnecessárias
+    if (name !== 'state') validateInputs(name, value);
     setButtonToggle(!filledInputs);
+  };
+  // Função para validar os inputs no global state
+  const validateInputs = (name: string, value: string): void => {
+    switch (name) {
+      case 'name':
+        value.length > 3 && numberRegex.test(value)
+          ? setValidInput({ ...validInput, [name]: true })
+          : setValidInput({ ...validInput, [name]: false });
+        break;
+      case 'surname':
+        value.length > 3 && numberRegex.test(value)
+          ? setValidInput({ ...validInput, [name]: true })
+          : setValidInput({ ...validInput, [name]: false });
+        break;
+      case 'email':
+        value.length > 5 && emailRegex.test(value)
+          ? setValidInput({ ...validInput, [name]: true })
+          : setValidInput({ ...validInput, [name]: false });
+        break;
+      case 'password':
+        value.length >= 8 && specialCharsRegex.test(value) && value.length <= 16
+          ? setValidInput({ ...validInput, [name]: true })
+          : setValidInput({ ...validInput, [name]: false });
+        break;
+      case 'repeatedPassword':
+        value === account.password
+          ? setValidInput({ ...validInput, [name]: true })
+          : setValidInput({ ...validInput, [name]: false });
+        break;
+      default:
+        break;
+    }
   };
 
   const submitAccount = (): void => {
-    const isEmailValid: boolean = emailRegex.test(account.email);
-    if (account.name.length < 3) throw new Error('Nome muito pequeno');
-    if (account.surname.length < 3) throw new Error('Sobrenome muito pequeno');
-    if (!isEmailValid) throw new Error('Email inválido');
-    const validPass: boolean = account.password === account.repeatedPassword && account.password.length >= 8 && specialCharsRegex.test(account.password);
-    if (!validPass) throw new Error('Senha inválida');
     let region: string | undefined = globalState.locationsApi.states.find((state) => state.nome === account.state)?.regiao.nome;
     if (region === undefined) region = '';
     dispatch(actionAccountCreation({
@@ -50,13 +81,15 @@ function CreateAccount() {
 
   return (
     <div>
-      <label htmlFor="name">Nome:</label>
-      <input
-        type="text"
-        name="name"
-        id="name"
-        onChange={({ target }) => { onChangeInput(target); }}
-        value={account.name} />
+      <label htmlFor="name">Nome:
+        <input
+          type="text"
+          name="name"
+          id="name"
+          onChange={({ target }) => { onChangeInput(target); }}
+          value={account.name} />
+        {validInput.name ? <FiCheck /> : <FiAlertTriangle title='Seu nome precisa ter mais de 3 caracteres' />}
+      </label>
 
       <label htmlFor="surname">Sobrenome:</label>
       <input
@@ -65,6 +98,7 @@ function CreateAccount() {
         id="surname"
         onChange={({ target }) => { onChangeInput(target); }}
         value={account.surname} />
+      {validInput.surname ? <FiCheck /> : <FiAlertTriangle />}
       {/* State para verificar quando o email é válido e fazer uma interação com o usuário com popup e check verde */}
       <label htmlFor="email">E-mail:</label>
       <input
@@ -73,6 +107,7 @@ function CreateAccount() {
         id="email"
         onChange={({ target }) => { onChangeInput(target); }}
         value={account.email} />
+      {validInput.email ? <FiCheck /> : <FiAlertTriangle />}
 
       <label htmlFor="password">Insira sua senha:</label>
       <input
@@ -80,6 +115,7 @@ function CreateAccount() {
         name="password"
         id="password"
         onChange={({ target }) => { onChangeInput(target); }} />
+      {validInput.password ? <FiCheck /> : <FiAlertTriangle />}
 
       <label htmlFor="repeat-password">Repita a sua senha:</label>
       <input
@@ -87,6 +123,7 @@ function CreateAccount() {
         name="repeatedPassword"
         id="repeatedPassword"
         onChange={({ target }) => { onChangeInput(target); }} />
+      {validInput.repeatedPassword ? <FiCheck /> : <FiAlertTriangle />}
 
       <select name="state" id="state" onChange={({ target }) => { onChangeInput(target); }} value={account.state}>
         {globalState.locationsApi.states.map((state: ILocations, index: number) => (

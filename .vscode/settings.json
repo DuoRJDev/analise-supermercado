@@ -3,7 +3,7 @@
   "editor.formatOnSave": true,
   "eslint.alwaysShowStatus": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll": true
+    "source.fixAll": "explicit"
   },
   "[typescriptreact]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
