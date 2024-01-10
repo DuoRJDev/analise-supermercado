@@ -1,7 +1,7 @@
 import React, { useState, type ChangeEvent, type FormEvent } from 'react';
 import axios from 'axios';
 
-function Login () {
+function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -65,38 +65,41 @@ function Login () {
   };
 
   return (
-        <div>
-            <h2>Tela de Login</h2>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="email">E-mail:</label>
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={email}
-                    onChange={handleEmailChange}
-                    data-testid="email-input"
-                    required
-                />
-                <br />
-                {emailError && <p style={{ color: 'red' }}>{emailError}</p>}
-                <label htmlFor="password">Senha:</label>
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    value={password}
-                    onChange={handlePasswordChange}
-                    data-testid="password-input"
-                    required
-                />
-                <br />
-                {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
-                <button type="submit" data-testid="login-submit-btn" disabled={!!emailError || !!passwordError}>
-                    Entrar
-                </button>
-            </form>
-        </div>
+    <div>
+      <h2>Tela de Login</h2>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="email">E-mail:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value={email}
+          onChange={handleEmailChange}
+          data-testid="email-input"
+          required
+        />
+        <br />
+        {emailError && <p style={{ color: 'red' }}>{emailError}</p>}
+        <label htmlFor="password">Senha:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          value={password}
+          onChange={handlePasswordChange}
+          data-testid="password-input"
+          required
+        />
+        <br />
+        {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
+        <button type="submit" data-testid="login-submit-btn" disabled={!!emailError || !!passwordError}>
+          Entrar
+        </button>
+        <button type="submit" data-testid="create-account-submit-btn">
+          Criar Conta
+        </button>
+      </form>
+    </div>
   );
 }
 
