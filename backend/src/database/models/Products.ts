@@ -26,8 +26,9 @@ Products.init({
   sequelize: db,
   timestamps: false,
   underscored: false,
+  tableName: 'products',
 });
-
+// Corrigir chaves estrangeiras seguir a model User já corrigida, migration e seeders -- RETIRAR COMENTÁRIO APÓS CORREÇÃO
 Products.belongsTo(Categories, { foreignKey: 'id', as: 'category' });
 Products.belongsTo(Brands, { foreignKey: 'id', as: 'brand' });
 

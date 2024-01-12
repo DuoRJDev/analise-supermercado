@@ -37,8 +37,10 @@ Sales.init({
   sequelize: db,
   timestamps: false,
   underscored: false,
+  tableName: 'sales',
 });
 
+// Corrigir chaves estrangeiras seguir a model User já corrigida, migration e seeders -- RETIRAR COMENTÁRIO APÓS CORREÇÃO
 Sales.belongsTo(Users, { foreignKey: 'id', as: 'user' });
 Sales.belongsTo(Products, { foreignKey: 'id', as: 'product' });
 Sales.belongsTo(Markets, { foreignKey: 'id', as: 'market' });

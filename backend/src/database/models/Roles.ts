@@ -20,6 +20,7 @@ Roles.init({
   sequelize: db,
   timestamps: false,
   underscored: false,
+  tableName: 'roles',
 });
 
 export default Roles;
