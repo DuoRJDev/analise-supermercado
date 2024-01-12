@@ -20,6 +20,7 @@ Regions.init({
   sequelize: db,
   timestamps: false,
   underscored: false,
+  tableName: 'regions',
 });
 
 export default Regions;

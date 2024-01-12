@@ -1,10 +1,12 @@
 export default interface IUsers {
-  id: number,
+  id?: number,
   name: string,
   surname: string,
   email: string,
   password: string,
-  role: number,
-  state: number,
-  region: number,
+  roleId: number,
+  stateId: number,
+  regionId: number,
+  createdAt: Date,
+  updatedAt: Date,
 }

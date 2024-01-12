@@ -20,6 +20,7 @@ States.init({
   sequelize: db,
   timestamps: false,
   underscored: false,
+  tableName: 'states',
 });
 
 export default States;

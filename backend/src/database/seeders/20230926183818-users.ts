@@ -10,7 +10,11 @@ export default {
           surname: 'Master',
           email: 'admin@admin.com',
           password: 'Admin!23',
-          role: 1,
+          roleId: 1,
+          stateId: 1,
+          regionId: 1,
+          createdAt: '2024-01-12 06:44:09',
+          updatedAt: '2024-01-12 06:44:09',
         }
       ],
       {},
