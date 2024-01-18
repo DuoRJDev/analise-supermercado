@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
+import { configDotenv } from 'dotenv';
 import CreateService from '../services/CreateAccService';
+
+configDotenv();
 
 export default class CreateAccController {
   private secret = process.env.JWT_SECRET || 'secret' as string;
