@@ -1,12 +1,15 @@
 import React, { useState, type ChangeEvent, type FormEvent } from 'react';
 import { saveLocalStorage } from '../helpers/storage';
 import axios from 'axios';
+import { Navigate } from 'react-router-dom';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [navCreateAcc, setNav] = useState(false);
+
   const URL_LOGIN = 'http://localhost:3001/login';
 
   const validateEmail = (emailInput: string): void => {
@@ -65,46 +68,44 @@ function Login() {
     // localStorage.setItem('user', JSON.stringify({ email }));
   };
 
+  if (navCreateAcc) return <Navigate to="/create-account" />;
+
   return (
     <div>
       <h2>Tela de Login</h2>
-      <label htmlFor="email">E-mail:</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        value={email}
-        onChange={handleEmailChange}
-        data-testid="email-input"
-        required
-      />
-      <br />
-      {emailError && <p style={{ color: 'red' }}>{emailError}</p>}
-      <label htmlFor="password">Senha:</label>
-      <input
-        type="password"
-        id="password"
-        name="password"
-        value={password}
-        onChange={handlePasswordChange}
-        data-testid="password-input"
-        required
-      />
-      <br />
-      {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
-      <button
-        onClick={handleSubmit}
-        data-testid="login-submit-btn"
-        disabled={!!emailError || !!passwordError}
-      >
-        Login
-      </button>
-      <button
-        data-testid="login-submit-btn"
-      >
-        Criar nova conta
-      </button>
-    </div>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="email">E-mail:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value={email}
+          onChange={handleEmailChange}
+          data-testid="email-input"
+          required
+        />
+        <br />
+        {emailError && <p style={{ color: 'red' }}>{emailError}</p>}
+        <label htmlFor="password">Senha:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          value={password}
+          onChange={handlePasswordChange}
+          data-testid="password-input"
+          required
+        />
+        <br />
+        {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
+        <button type="button" data-testid="login-submit-btn" disabled={!!emailError || !!passwordError}>
+          Entrar
+        </button>
+        <button type="button" data-testid="create-account-submit-btn" onClick={() => { setNav(true); }}>
+          Criar Conta
+        </button>
+      </form>
+    </div >
   );
 }
 

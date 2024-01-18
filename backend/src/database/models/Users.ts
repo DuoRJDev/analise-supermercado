@@ -17,9 +17,11 @@ class Users extends Model<InferAttributes<Users>,
   declare surname: CreationOptional<string>;
   declare email: CreationOptional<string>;
   declare password: CreationOptional<string>;
-  declare role: CreationOptional<number>;
-  declare state: CreationOptional<number>;
-  declare region: CreationOptional<number>;
+  declare roleId: CreationOptional<number>;
+  declare stateId: CreationOptional<number>;
+  declare regionId: CreationOptional<number>;
+  declare createdAt: CreationOptional<Date>;
+  declare updatedAt: CreationOptional<Date>;
 }
 
 Users.init({
@@ -28,17 +30,20 @@ Users.init({
   surname: { type: DataTypes.STRING, allowNull: false },
   email: { type: DataTypes.STRING, allowNull: false },
   password: { type: DataTypes.STRING, allowNull: false },
-  role: { type: DataTypes.INTEGER, allowNull: false },
-  state: { type: DataTypes.INTEGER, allowNull: true },
-  region: { type: DataTypes.INTEGER, allowNull: true },
+  roleId: { type: DataTypes.INTEGER, allowNull: false },
+  stateId: { type: DataTypes.INTEGER, allowNull: true },
+  regionId: { type: DataTypes.INTEGER, allowNull: true },
+  createdAt: { type: DataTypes.DATE, allowNull: true },
+  updatedAt: { type: DataTypes.DATE, allowNull: true },
 }, {
   sequelize: db,
   timestamps: true,
   underscored: false,
+  tableName: 'users',
 });
 
-Users.belongsTo(Roles, { foreignKey: 'id', as: 'role' });
-Users.belongsTo(States, { foreignKey: 'id', as: 'state' });
-Users.belongsTo(Regions, { foreignKey: 'id', as: 'region' });
+Users.belongsTo(Roles, { foreignKey: 'roleId', as: 'role' });
+Users.belongsTo(States, { foreignKey: 'stateId', as: 'state' });
+Users.belongsTo(Regions, { foreignKey: 'regionId', as: 'region' });
 
 export default Users;
