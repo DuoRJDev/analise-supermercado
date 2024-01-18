@@ -2,27 +2,44 @@ import React, { useEffect, useState } from 'react';
 import { FiCheck, FiAlertTriangle } from 'react-icons/fi';
 import { useDispatch, useSelector } from 'react-redux';
 import locations from '../helpers/locations';
-import { actionAccountCreation, actionFillStates } from '../redux/actions';
+import { actionFillStates } from '../redux/actions';
 import type ILocations from '../interfaces/Locations';
-import type IGlobalState from '../interfaces/GlobalState';
 import type ICreateAccount from '../interfaces/CreateAccount';
 import { createAccount, setToken } from '../helpers/connection';
 import { Navigate } from 'react-router-dom';
+import bcrypt from 'bcryptjs';
 
-function CreateAccount() {
+function CreateAccount(): React.ReactElement {
   const [account, setAccount] = useState({ name: '', surname: '', email: '', password: '', repeatedPassword: '', state: 'Acre' });
-  const [buttonToggle, setButtonToggle] = useState(true);
   // Estado para gerenciar os alertas de preenchimento
   const [validInput, setValidInput] = useState({ name: false, surname: false, email: false, password: false, repeatedPassword: false });
+  // Estado para notificar o que falta ser preenchido dos inputs
+  const [inputHints, setHints] = useState(
+    {
+      name: 'Seu nome precisa ter mais de 3 caracteres',
+      surname: 'Seu sobrenome precisa ter mais de 3 caracteres',
+      email: 'Seu email precisa ser válido',
+      password: 'Sua senha precisa de:\n  Pelo menos 1 letra maiúscula\n  Pelo menos 1 caractere especial\n  Pelo menos 8 caracteres e no máximo 16',
+      repeatedPassword: 'Sua senha precisa estar idêntica nos 2 campos'
+    });
+
+  const [buttonToggle, setButtonToggle] = useState(true);
   const [createSuccesfull, setCreateSuccesfull] = useState(false);
   // Redux
-  const globalState: IGlobalState = useSelector((state) => state) as IGlobalState;
+  const locationsRedux = useSelector((state) => state.locationsApi);
   const dispatch = useDispatch();
   // Validações
   const emailRegex = /^[a-z0-9.-_]+@[a-z0-9.-]+\.[a-z]+$/i;
   const specialCharsRegex = /[`!@#$%^&*()_+=[\]{};':"\\|,.<>/?~]/;
   const numberRegex = /[^0-9]/;
-
+  // Número de criptografagens
+  const saltRounds = 10;
+  /**
+   * Captura os nomes e valores dos inputs enquanto são preenchidos, realizando verificações de regras de negócio
+   * e liberação da criação de conta quando preenchido corretamente.
+   * @param target - Target do DOM
+   * @returns void
+   */
   const onChangeInput = ({ name, value }: { name: string, value: string }): void => {
     setAccount({ ...account, [name]: value });
     const filledInputs = Object.keys(account).every(key => account[key].length > 0);
@@ -30,7 +47,12 @@ function CreateAccount() {
     if (name !== 'state') validateInputs(name, value);
     setButtonToggle(!filledInputs && Object.values(validInput).every(bool => bool));
   };
-  // Função para validar os inputs no global state
+  /**
+   * Função que realiza as verificações dos inputs para respeitar regras de negócio.
+   * @param name - Nome do input
+   * @param value - Valor do input
+   * @returns void
+   */
   const validateInputs = (name: string, value: string): void => {
     switch (name) {
       case 'name':
@@ -62,32 +84,44 @@ function CreateAccount() {
         break;
     }
   };
-
-  const submitAccount = async (): Promise<void> => {
-    let region: string | undefined = globalState.locationsApi.states.find((state) => state.nome === account.state)?.regiao.nome;
-    if (region === undefined) region = '';
-    dispatch(actionAccountCreation({
-      name: account.name,
-      surname: account.surname,
-      email: account.email,
-      state: account.state,
-      region
-    }));
-    const bodyData: ICreateAccount = {
-      name: account.name,
-      surname: account.surname,
-      email: account.email,
-      password: account.password,
-      state: account.state,
-      region
-    };
+  /**
+   * Recebe a senha e realiza criptografagem da mesma
+   * @param password - Senha inserida no input.
+   * @returns - Retorna a senha encriptada
+   */
+  const hashPassword = async (password: string): Promise<string> => {
     try {
-      const { token, role } = await createAccount(bodyData);
+      const salt = await bcrypt.genSalt(saltRounds);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      return hashedPassword;
+    } catch (error) {
+      throw new Error('Falha ao encriptar a senha');
+    }
+  };
+  /**
+   * Realiza o cadastro da conta ao banco de dados,
+   * adiciona o token gerado para o login automático e
+   * realiza o redirecionamento para a página principal.
+   */
+  const submitAccount = async (): Promise<void> => {
+    try {
+      let region: string | undefined = locationsRedux.states.find((state) => state.nome === account.state)?.regiao.nome;
+      if (region === undefined) region = '';
+      const password = await hashPassword(account.password);
+      const bodyData: ICreateAccount = {
+        name: account.name,
+        surname: account.surname,
+        email: account.email,
+        password,
+        state: account.state,
+        region
+      };
+      const { token } = await createAccount(bodyData);
 
       setToken(token);
 
       localStorage.setItem('token', token);
-      localStorage.setItem('role', role);
+      localStorage.setItem('role', 'User');
 
       setCreateSuccesfull(true);
     } catch (error) {
@@ -96,6 +130,8 @@ function CreateAccount() {
   };
 
   useEffect(() => {
+    const tokenExists = localStorage.getItem('token');
+    if (tokenExists !== undefined) return <Navigate to="/main" />;
     const fetch = async (): Promise<void> => {
       const apiStates = await locations.getStatesApi();
       if (apiStates.length > 0) dispatch(actionFillStates(apiStates));
@@ -104,7 +140,7 @@ function CreateAccount() {
   }, []);
 
   // Depois que criada a conta é feito o redirecionamento para a página Home
-  if (createSuccesfull) return <Navigate to="/login" />;
+  if (createSuccesfull) return <Navigate to="/main" />;
 
   return (
     <div>
@@ -115,7 +151,7 @@ function CreateAccount() {
           id="name"
           onChange={({ target }) => { onChangeInput(target); }}
           value={account.name} />
-        {validInput.name ? <FiCheck /> : <FiAlertTriangle title='Seu nome precisa ter mais de 3 caracteres' />}
+        {validInput.name ? <FiCheck /> : <FiAlertTriangle title={inputHints.name} />}
       </label>
 
       <label htmlFor="surname">Sobrenome:</label>
@@ -125,7 +161,7 @@ function CreateAccount() {
         id="surname"
         onChange={({ target }) => { onChangeInput(target); }}
         value={account.surname} />
-      {validInput.surname ? <FiCheck /> : <FiAlertTriangle />}
+      {validInput.surname ? <FiCheck /> : <FiAlertTriangle title={inputHints.surname} />}
       <label htmlFor="email">E-mail:</label>
       <input
         type="email"
@@ -133,7 +169,7 @@ function CreateAccount() {
         id="email"
         onChange={({ target }) => { onChangeInput(target); }}
         value={account.email} />
-      {validInput.email ? <FiCheck /> : <FiAlertTriangle />}
+      {validInput.email ? <FiCheck /> : <FiAlertTriangle title={inputHints.email} />}
 
       <label htmlFor="password">Insira sua senha:</label>
       <input
@@ -141,7 +177,7 @@ function CreateAccount() {
         name="password"
         id="password"
         onChange={({ target }) => { onChangeInput(target); }} />
-      {validInput.password ? <FiCheck /> : <FiAlertTriangle />}
+      {validInput.password ? <FiCheck /> : <FiAlertTriangle title={inputHints.password} />}
 
       <label htmlFor="repeat-password">Repita a sua senha:</label>
       <input
@@ -149,11 +185,12 @@ function CreateAccount() {
         name="repeatedPassword"
         id="repeatedPassword"
         onChange={({ target }) => { onChangeInput(target); }} />
-      {validInput.repeatedPassword ? <FiCheck /> : <FiAlertTriangle />}
+      {validInput.repeatedPassword ? <FiCheck /> : <FiAlertTriangle title={inputHints.repeatedPassword} />}
 
       <select name="state" id="state" onChange={({ target }) => { onChangeInput(target); }} value={account.state}>
-        {globalState.locationsApi.states.map((state: ILocations, index: number) => (
-          <option key={index} value={state.nome}>{state.nome}</option>))}
+        <option key="0" >{locationsRedux.states !== undefined ? 'Selecione' : 'Carregando...'}</option>
+        {locationsRedux.states.map((state: ILocations, index: number) => (
+          <option key={index + 1} value={state.nome}>{state.nome}</option>))}
       </select>
 
       <input type="button" name="submit-button" id="submit-button" value="Enviar" disabled={buttonToggle} onClick={submitAccount} />

@@ -1,11 +1,13 @@
 import React, { useState, type ChangeEvent, type FormEvent } from 'react';
 import axios from 'axios';
+import { Navigate } from 'react-router-dom';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [navCreateAcc, setNav] = useState(false);
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newEmail = e.target.value;
@@ -64,6 +66,8 @@ function Login() {
     }
   };
 
+  if (navCreateAcc) return <Navigate to="/create-account" />;
+
   return (
     <div>
       <h2>Tela de Login</h2>
@@ -92,14 +96,14 @@ function Login() {
         />
         <br />
         {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
-        <button type="submit" data-testid="login-submit-btn" disabled={!!emailError || !!passwordError}>
+        <button type="button" data-testid="login-submit-btn" disabled={!!emailError || !!passwordError}>
           Entrar
         </button>
-        <button type="submit" data-testid="create-account-submit-btn">
+        <button type="button" data-testid="create-account-submit-btn" onClick={() => { setNav(true); }}>
           Criar Conta
         </button>
       </form>
-    </div>
+    </div >
   );
 }
 
