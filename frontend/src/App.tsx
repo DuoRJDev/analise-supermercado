@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import CreateAccount from './pages/CreateAccount';
+import Main from './pages/Main';
 
 function App(): React.ReactElement {
   return (
@@ -10,8 +11,7 @@ function App(): React.ReactElement {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/create-account" element={<CreateAccount />} />
-          {/* Criar e modificar o componente da rota main */}
-          <Route path="/main" element={<Login />} />
+          <Route path="/main" element={<Main />} />
         </Routes>
       </Router>
     </div>

@@ -34,7 +34,12 @@ function CreateAccount(): React.ReactElement {
   const numberRegex = /[^0-9]/;
   // Número de criptografagens
   const saltRounds = 10;
-
+  /**
+   * Captura os nomes e valores dos inputs enquanto são preenchidos, realizando verificações de regras de negócio
+   * e liberação da criação de conta quando preenchido corretamente.
+   * @param target - Target do DOM
+   * @returns void
+   */
   const onChangeInput = ({ name, value }: { name: string, value: string }): void => {
     setAccount({ ...account, [name]: value });
     const filledInputs = Object.keys(account).every(key => account[key].length > 0);
@@ -42,7 +47,12 @@ function CreateAccount(): React.ReactElement {
     if (name !== 'state') validateInputs(name, value);
     setButtonToggle(!filledInputs && Object.values(validInput).every(bool => bool));
   };
-  // Função para validar os inputs no global state
+  /**
+   * Função que realiza as verificações dos inputs para respeitar regras de negócio.
+   * @param name - Nome do input
+   * @param value - Valor do input
+   * @returns void
+   */
   const validateInputs = (name: string, value: string): void => {
     switch (name) {
       case 'name':
@@ -74,7 +84,11 @@ function CreateAccount(): React.ReactElement {
         break;
     }
   };
-
+  /**
+   * Recebe a senha e realiza criptografagem da mesma
+   * @param password - Senha inserida no input.
+   * @returns - Retorna a senha encriptada
+   */
   const hashPassword = async (password: string): Promise<string> => {
     try {
       const salt = await bcrypt.genSalt(saltRounds);
@@ -84,7 +98,11 @@ function CreateAccount(): React.ReactElement {
       throw new Error('Falha ao encriptar a senha');
     }
   };
-
+  /**
+   * Realiza o cadastro da conta ao banco de dados,
+   * adiciona o token gerado para o login automático e
+   * realiza o redirecionamento para a página principal.
+   */
   const submitAccount = async (): Promise<void> => {
     try {
       let region: string | undefined = locationsRedux.states.find((state) => state.nome === account.state)?.regiao.nome;
