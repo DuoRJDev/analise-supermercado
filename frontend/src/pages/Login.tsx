@@ -5,9 +5,9 @@ import { Navigate } from 'react-router-dom';
 import { requestLogin, setToken } from '../helpers/connection';
 
 function Login(): React.ReactElement {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  // const [login, setLogin] = useState({ email: '', password: '' });
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
+  const [login, setLogin] = useState({ email: '', password: '' });
   const [emailError, setEmailError] = useState({ invalid: true, hint: '' });
   const [passwordError, setPasswordError] = useState({ invalid: true, hint: '' });
   const [navCreateAcc, setNav] = useState(false);
@@ -20,62 +20,64 @@ function Login(): React.ReactElement {
   const emailRegex = /^[a-z0-9.-_]+@[a-z0-9.-]+\.[a-z]+$/i;
   const specialCharsRegex = /[`!@#$%^&*()_+=[\]{};':"\\|,.<>/?~]/;
 
-  const validateEmail = (emailInput: string): void => {
-    const isValidEmail = emailInput.length > 5 && emailRegex.test(emailInput);
+  // const validateEmail = (emailInput: string): void => {
+  //   const isValidEmail = emailInput.length > 5 && emailRegex.test(emailInput);
 
-    if (!isValidEmail) {
-      setEmailError({ invalid: true, hint: 'E-mail inválido. Certifique-se de que contém "@" e ".com".' });
-    } else {
-      setEmailError({ invalid: false, hint: '' });
-    }
-  };
-
-  const validatePassword = (password: string): void => {
-    const isValidPassword = password.length >= 8 && password.length <= 16 && specialCharsRegex.test(password) && numberRegex.test(password);
-
-    if (!isValidPassword) {
-      setPasswordError({ invalid: true, hint: 'A senha deve conter pelo menos 8 caracteres, máximo de 16, 1 letra maiúscula, 1 caractere especial e 1 caractere numérico.' });
-    } else {
-      setPasswordError({ invalid: false, hint: '' });
-    }
-  };
-
-  // const onChangeInput = ({ name, value }: { name: string, value: string }): void => {
-  //   setLogin({ ...login, [name]: value });
-  //   validateInputs(name, value);
-  // };
-
-  // const validateInputs = (name: string, value: string): void => {
-  //   switch (name) {
-  //     case 'email':
-  //       value.length > 5 && emailRegex.test(value)
-  //         ? setEmailError({ invalid: true, hint: 'E-mail inválido. Certifique-se de que contém "@" e ".com".' })
-  //         : setEmailError({ invalid: false, hint: '' });
-  //       break;
-  //     case 'password':
-  //       value.length >= 8 && password.length <= 16 && specialCharsRegex.test(value) && numberRegex.test(value)
-  //         ? setPasswordError({ invalid: true, hint: 'A senha deve conter pelo menos 8 caracteres, máximo de 16, 1 letra maiúscula, 1 caractere especial e 1 caractere numérico.' })
-  //         : setPasswordError({ invalid: false, hint: '' });
-  //       break;
-  //     default:
-  //       break;
+  //   if (!isValidEmail) {
+  //     setEmailError({ invalid: true, hint: 'E-mail inválido. Certifique-se de que contém "@" e ".com".' });
+  //   } else {
+  //     setEmailError({ invalid: false, hint: '' });
   //   }
   // };
 
-  const handleEmailChange = ({ value }: { value: string }): void => {
-    const emailInput = value;
-    setEmail(emailInput);
-    validateEmail(emailInput);
+  // const validatePassword = (password: string): void => {
+  //   const isValidPassword = password.length >= 8 && password.length <= 16 && specialCharsRegex.test(password) && numberRegex.test(password);
+
+  //   if (!isValidPassword) {
+  //     setPasswordError({ invalid: true, hint: 'A senha deve conter pelo menos 8 caracteres, máximo de 16, 1 letra maiúscula, 1 caractere especial e 1 caractere numérico.' });
+  //   } else {
+  //     setPasswordError({ invalid: false, hint: '' });
+  //   }
+  // };
+
+  const onChangeInput = ({ name, value }: { name: string, value: string }): void => {
+    setLogin({ ...login, [name]: value });
+    validateInputs(name, value);
   };
 
-  const handlePasswordChange = ({ value }: { value: string }): void => {
-    const newPassword = value;
-    setPassword(newPassword);
-    validatePassword(newPassword);
+  const validateInputs = (name: string, value: string): void => {
+    switch (name) {
+      case 'email':
+        value.length > 5 && emailRegex.test(value)
+          ? setEmailError({ invalid: false, hint: '' })
+          : setEmailError({ invalid: true, hint: 'E-mail inválido. Certifique-se de que contém "@" e ".com".' });
+        break;
+      case 'password':
+        value.length >= 8 && value.length <= 16 && specialCharsRegex.test(value) && numberRegex.test(value)
+          ? setPasswordError({ invalid: false, hint: '' })
+          : setPasswordError({ invalid: true, hint: 'A senha deve conter pelo menos 8 caracteres, máximo de 16, 1 letra maiúscula, 1 caractere especial e 1 caractere numérico.' });
+        break;
+      default:
+        break;
+    }
   };
+
+  // const handleEmailChange = ({ value }: { value: string }): void => {
+  //   const emailInput = value;
+  //   setEmail(emailInput);
+  //   validateEmail(emailInput);
+  // };
+
+  // const handlePasswordChange = ({ value }: { value: string }): void => {
+  //   const newPassword = value;
+  //   setPassword(newPassword);
+  //   validatePassword(newPassword);
+  // };
 
   const accountLogin = async (): Promise<void> => {
     // Precisa capturar Role e 'Fail' no retorno, ajustar no backend
+    console.log('accountlogin');
+    const { email, password } = login;
     const { token } = await requestLogin({ email, password });
     const fail = null;
     if (fail === 'email') setWrongEmail(true);
@@ -97,13 +99,13 @@ function Login(): React.ReactElement {
         type="email"
         id="email"
         name="email"
-        value={email}
-        onChange={({ target }) => { handleEmailChange(target); }}
+        value={login.email}
+        onChange={({ target }) => { onChangeInput(target); }}
         data-testid="email-input"
         required
       />
       {
-        email.length > 1
+        login.email.length > 1
           ? emailError.invalid
             ? <FiAlertTriangle title={emailError.hint} />
             : <FiCheck />
@@ -115,13 +117,13 @@ function Login(): React.ReactElement {
         type="password"
         id="password"
         name="password"
-        value={password}
-        onChange={({ target }) => { handlePasswordChange(target); }}
+        value={login.password}
+        onChange={({ target }) => { onChangeInput(target); }}
         data-testid="password-input"
         required
       />
       {
-        password.length > 1
+        login.password.length > 1
           ? passwordError.invalid
             ? <FiAlertTriangle title={emailError.hint} />
             : <FiCheck />
@@ -133,7 +135,7 @@ function Login(): React.ReactElement {
         type="button"
         data-testid="login-submit-btn"
         disabled={emailError.invalid && passwordError.invalid}
-        onClick={() => accountLogin}>
+        onClick={accountLogin}>
         Entrar
       </button>
       {/* CRIAR CONTA */}
