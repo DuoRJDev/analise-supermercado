@@ -11,7 +11,10 @@ function Login(): React.ReactElement {
   const [emailError, setEmailError] = useState({ invalid: true, hint: '' });
   const [passwordError, setPasswordError] = useState({ invalid: true, hint: '' });
   const [navCreateAcc, setNav] = useState(false);
-  const [loginSuccessfull, setLoginSuccess] = useState(false);
+  const [wrongEmail, setWrongEmail] = useState(false);
+  const [wrongPassword, setWrongPass] = useState(false);
+  const [loadingLogin, setLoadingLogin] = useState(false);
+  const [loadingSuccessfull, setLoadingSuccess] = useState(false);
 
   const numberRegex = /[^0-9]/;
   const emailRegex = /^[a-z0-9.-_]+@[a-z0-9.-]+\.[a-z]+$/i;
@@ -72,18 +75,19 @@ function Login(): React.ReactElement {
   };
 
   const accountLogin = async (): Promise<void> => {
-    try {
-      const { token } = await requestLogin({ email, password });
-      setToken(token);
-      saveLocalStorage('token', token);
-      setLoginSuccess(true);
-    } catch (error) {
-      console.error('Erro ao fazer login:', error);
-    }
+    // Precisa capturar Role e 'Fail' no retorno, ajustar no backend
+    const { token } = await requestLogin({ email, password });
+    const fail = null;
+    if (fail === 'email') setWrongEmail(true);
+    if (fail === 'password') setWrongPass(true);
+    setToken(token);
+    saveLocalStorage('token', token);
+    if (fail === null) setLoadingLogin(true);
   };
 
   if (navCreateAcc) return <Navigate to="/create-account" />;
-  if (loginSuccessfull) return <Navigate to="/main" />;
+  if (loadingLogin) setTimeout(() => { setLoadingSuccess(true); }, 5000);
+  if (loadingSuccessfull) return <Navigate to="/main" />;
 
   return (
     <div>
@@ -129,7 +133,7 @@ function Login(): React.ReactElement {
         type="button"
         data-testid="login-submit-btn"
         disabled={emailError.invalid && passwordError.invalid}
-        onClick={accountLogin}>
+        onClick={() => accountLogin}>
         Entrar
       </button>
       {/* CRIAR CONTA */}
