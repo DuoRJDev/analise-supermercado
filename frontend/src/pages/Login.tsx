@@ -43,13 +43,30 @@ function Login(): React.ReactElement {
     // Precisa capturar Role e 'Fail' no retorno, ajustar no backend
     // Ajustar para pegar pelo token
     const { email, password } = login;
-    const { token, fail } = await requestLogin({ email, password });
-    if (fail === 'email') setLoginStatus('Usuário não encontrado, esse é o email correto?');
-    if (fail === 'password') setLoginStatus('Senha incorreta!');
-    setToken(token);
-    saveLocalStorage('token', token);
-    setLoginStatus('Login efetuado, aguarde!');
-    if (fail === null) setLoadingLogin(true);
+    const response = await requestLogin({ email, password })
+      .then((res) => {
+        return res;
+      })
+      .catch((error) => {
+        console.log('Erro ao efetuar login: ', error);
+        return error.response.data;
+      });
+    switch (response.fail) {
+      case 'email':
+        setLoginStatus('Usuário não encontrado, esse é o email correto?');
+        break;
+      case 'password':
+        setLoginStatus('Senha incorreta!');
+        break;
+      default:
+        setLoginStatus('');
+        setToken(response.token);
+        saveLocalStorage('token', response.token);
+        setLoginStatus('Login efetuado, aguarde!');
+        setLoadingLogin(true);
+        setEmailError({ valid: false, hint: '' });
+        break;
+    }
   };
 
   // Redirecionamento para a page CreateAccount
@@ -62,7 +79,7 @@ function Login(): React.ReactElement {
   return (
     <div>
       <h2>Faça o Login</h2>
-      {loginStatus.length >= 1 ? <h2>{loginStatus}</h2> : null}
+      {loginStatus.length >= 1 ? <h3>{loginStatus}</h3> : null}
       <label htmlFor="email">E-mail: </label>
       <input
         type="email"

@@ -15,10 +15,10 @@ export default class LoginController {
       const { type } = await this.loginService.login(email, password);
       // Melhorar o tipo de retorno para identificar qual das variáveis está errada
       if (type === 'USER_NOT_FOUND') return res.status(401)
-        .json({ fail: 'email' });
-      if (type === 'WRONG_PASS') return res.status(401).json({ fail: 'password' });
+        .json({ fail: 'email', token: '' });
+      if (type === 'WRONG_PASS') return res.status(401).json({ fail: 'password', token: '' });
       const token = jwt.sign(email, this.secret);
-      return res.status(200).json({ token });
+      return res.status(200).json({ fail: '', token });
     } catch (error) {
       console.error('Login falhou com o erro:', error);
     }
