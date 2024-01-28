@@ -33,7 +33,7 @@ function Login(): React.ReactElement {
           : setEmailError({ invalid: true, hint: 'E-mail inválido. Certifique-se de que contém "@" e ".com".' });
         break;
       case 'password':
-        value.length >= 8 && value.length <= 16 && specialCharsRegex.test(value) && numberRegex.test(value)
+        (value.length >= 8 && value.length <= 16) && specialCharsRegex.test(value) && numberRegex.test(value)
           ? setPasswordError({ invalid: false, hint: '' })
           : setPasswordError({ invalid: true, hint: 'A senha deve conter pelo menos 8 caracteres, máximo de 16, 1 letra maiúscula, 1 caractere especial e 1 caractere numérico.' });
         break;
@@ -44,6 +44,7 @@ function Login(): React.ReactElement {
 
   const accountLogin = async (): Promise<void> => {
     // Precisa capturar Role e 'Fail' no retorno, ajustar no backend
+    // Ajustar para pegar pelo token
     const { email, password } = login;
     const { token, fail } = await requestLogin({ email, password });
     if (fail === 'email') setWrongEmail(true);
@@ -60,7 +61,7 @@ function Login(): React.ReactElement {
   return (
     <div>
       <h2>Faça o Login</h2>
-      <label htmlFor="email">E-mail:</label>
+      <label htmlFor="email">E-mail: </label>
       <input
         type="email"
         id="email"
@@ -68,17 +69,16 @@ function Login(): React.ReactElement {
         value={login.email}
         onChange={({ target }) => { onChangeInput(target); }}
         data-testid="email-input"
-        required
       />
       {
-        login.email.length > 1
+        login.email.length >= 1
           ? emailError.invalid
             ? <FiAlertTriangle title={emailError.hint} />
             : <FiCheck />
           : null
       }
       <br />
-      <label htmlFor="password">Senha:</label>
+      <label htmlFor="password">Senha: </label>
       <input
         type="password"
         id="password"
@@ -86,10 +86,9 @@ function Login(): React.ReactElement {
         value={login.password}
         onChange={({ target }) => { onChangeInput(target); }}
         data-testid="password-input"
-        required
       />
       {
-        login.password.length > 1
+        login.password.length >= 1
           ? passwordError.invalid
             ? <FiAlertTriangle title={emailError.hint} />
             : <FiCheck />
