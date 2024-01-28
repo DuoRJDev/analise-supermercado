@@ -5,14 +5,11 @@ import { Navigate } from 'react-router-dom';
 import { requestLogin, setToken } from '../helpers/connection';
 
 function Login(): React.ReactElement {
-  // const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState('');
   const [login, setLogin] = useState({ email: '', password: '' });
-  const [emailError, setEmailError] = useState({ invalid: true, hint: '' });
-  const [passwordError, setPasswordError] = useState({ invalid: true, hint: '' });
+  const [emailError, setEmailError] = useState({ valid: true, hint: '' });
+  const [passwordError, setPasswordError] = useState({ valid: false, hint: '' });
   const [navCreateAcc, setNav] = useState(false);
-  const [wrongEmail, setWrongEmail] = useState(false);
-  const [wrongPassword, setWrongPass] = useState(false);
+  const [loginStatus, setLoginStatus] = useState('');
   const [loadingLogin, setLoadingLogin] = useState(false);
   const [loadingSuccessfull, setLoadingSuccess] = useState(false);
 
@@ -29,13 +26,13 @@ function Login(): React.ReactElement {
     switch (name) {
       case 'email':
         value.length > 5 && emailRegex.test(value)
-          ? setEmailError({ invalid: false, hint: '' })
-          : setEmailError({ invalid: true, hint: 'E-mail inválido. Certifique-se de que contém "@" e ".com".' });
+          ? setEmailError({ valid: true, hint: '' })
+          : setEmailError({ valid: false, hint: 'E-mail inválido. Certifique-se de que contém "@" e ".com".' });
         break;
       case 'password':
         (value.length >= 8 && value.length <= 16) && specialCharsRegex.test(value) && numberRegex.test(value)
-          ? setPasswordError({ invalid: false, hint: '' })
-          : setPasswordError({ invalid: true, hint: 'A senha deve conter pelo menos 8 caracteres, máximo de 16, 1 letra maiúscula, 1 caractere especial e 1 caractere numérico.' });
+          ? setPasswordError({ valid: true, hint: '' })
+          : setPasswordError({ valid: false, hint: 'A senha deve conter pelo menos 8 caracteres, máximo de 16, 1 letra maiúscula, 1 caractere especial e 1 caractere numérico.' });
         break;
       default:
         break;
@@ -47,20 +44,25 @@ function Login(): React.ReactElement {
     // Ajustar para pegar pelo token
     const { email, password } = login;
     const { token, fail } = await requestLogin({ email, password });
-    if (fail === 'email') setWrongEmail(true);
-    if (fail === 'password') setWrongPass(true);
+    if (fail === 'email') setLoginStatus('Usuário não encontrado, esse é o email correto?');
+    if (fail === 'password') setLoginStatus('Senha incorreta!');
     setToken(token);
     saveLocalStorage('token', token);
+    setLoginStatus('Login efetuado, aguarde!');
     if (fail === null) setLoadingLogin(true);
   };
 
+  // Redirecionamento para a page CreateAccount
   if (navCreateAcc) return <Navigate to="/create-account" />;
-  if (loadingLogin) setTimeout(() => { setLoadingSuccess(true); }, 5000);
+  // Timeout para carregar as variáveis do usuário corretamente
+  if (loadingLogin) setTimeout(() => { setLoadingSuccess(true); }, 3000);
+  // Redirecionamento para a page Main após Login efetuado
   if (loadingSuccessfull) return <Navigate to="/main" />;
 
   return (
     <div>
       <h2>Faça o Login</h2>
+      {loginStatus.length >= 1 ? <h2>{loginStatus}</h2> : null}
       <label htmlFor="email">E-mail: </label>
       <input
         type="email"
@@ -72,9 +74,9 @@ function Login(): React.ReactElement {
       />
       {
         login.email.length >= 1
-          ? emailError.invalid
-            ? <FiAlertTriangle title={emailError.hint} />
-            : <FiCheck />
+          ? emailError.valid
+            ? <FiCheck />
+            : <FiAlertTriangle title={emailError.hint} />
           : null
       }
       <br />
@@ -89,9 +91,9 @@ function Login(): React.ReactElement {
       />
       {
         login.password.length >= 1
-          ? passwordError.invalid
-            ? <FiAlertTriangle title={emailError.hint} />
-            : <FiCheck />
+          ? passwordError.valid
+            ? <FiCheck />
+            : <FiAlertTriangle title={emailError.hint} />
           : null
       }
       <br />
@@ -99,7 +101,7 @@ function Login(): React.ReactElement {
       <button
         type="button"
         data-testid="login-submit-btn"
-        disabled={emailError.invalid && passwordError.invalid}
+        disabled={!(emailError.valid && passwordError.valid)}
         onClick={accountLogin}>
         Entrar
       </button>
