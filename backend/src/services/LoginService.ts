@@ -6,9 +6,8 @@ export default class LoginService {
 
   async login(email: string, password: string) {
     const user = await this.model.findOne({ where: { email } });
-    if (!user || !bcrypt.compareSync(password, user.dataValues.password)) {
-      return { type: 'UNAUTHORIZED' };
-    }
-    return { type: 'OK' };
+    if (!user) return { type: 'USER_NOT_FOUND' };
+    if (!bcrypt.compareSync(password, user.dataValues.password)) return { type: 'WRONG_PASS' };
+    return { type: 'OK', user };
   }
 }

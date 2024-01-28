@@ -34,6 +34,7 @@ function CreateAccount(): React.ReactElement {
   const numberRegex = /[^0-9]/;
   // Número de criptografagens
   const saltRounds = 10;
+
   /**
    * Captura os nomes e valores dos inputs enquanto são preenchidos, realizando verificações de regras de negócio
    * e liberação da criação de conta quando preenchido corretamente.
@@ -47,6 +48,7 @@ function CreateAccount(): React.ReactElement {
     if (name !== 'state') validateInputs(name, value);
     setButtonToggle(!filledInputs && Object.values(validInput).every(bool => bool));
   };
+
   /**
    * Função que realiza as verificações dos inputs para respeitar regras de negócio.
    * @param name - Nome do input
@@ -84,6 +86,7 @@ function CreateAccount(): React.ReactElement {
         break;
     }
   };
+
   /**
    * Recebe a senha e realiza criptografagem da mesma
    * @param password - Senha inserida no input.
@@ -98,6 +101,7 @@ function CreateAccount(): React.ReactElement {
       throw new Error('Falha ao encriptar a senha');
     }
   };
+
   /**
    * Realiza o cadastro da conta ao banco de dados,
    * adiciona o token gerado para o login automático e
@@ -130,8 +134,6 @@ function CreateAccount(): React.ReactElement {
   };
 
   useEffect(() => {
-    const tokenExists = localStorage.getItem('token');
-    if (tokenExists !== undefined) return <Navigate to="/main" />;
     const fetch = async (): Promise<void> => {
       const apiStates = await locations.getStatesApi();
       if (apiStates.length > 0) dispatch(actionFillStates(apiStates));
@@ -140,7 +142,9 @@ function CreateAccount(): React.ReactElement {
   }, []);
 
   // Depois que criada a conta é feito o redirecionamento para a página Home
+
   if (createSuccesfull) return <Navigate to="/main" />;
+  // if (tokenExists !== undefined) return <Navigate to="/main" />;
 
   return (
     <div>
@@ -193,7 +197,13 @@ function CreateAccount(): React.ReactElement {
           <option key={index + 1} value={state.nome}>{state.nome}</option>))}
       </select>
 
-      <input type="button" name="submit-button" id="submit-button" value="Enviar" disabled={buttonToggle} onClick={submitAccount} />
+      <input
+        type="button"
+        name="submit-button"
+        id="submit-button"
+        value="Enviar"
+        disabled={buttonToggle}
+        onClick={submitAccount} />
     </div>
   );
 }

@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
+import { configDotenv } from 'dotenv';
 import LoginService from '../services/LoginService';
+
+configDotenv();
 
 export default class LoginController {
   private secret = process.env.JWT_SECRET as string;
@@ -11,11 +14,11 @@ export default class LoginController {
       const { email, password } = req.body;
       const { type } = await this.loginService.login(email, password);
       // Melhorar o tipo de retorno para identificar qual das variáveis está errada
-      if (type === 'UNAUTHORIZED') {
-        return res.status(401).json({ message: 'Username or password invalid' });
-      }
+      if (type === 'USER_NOT_FOUND') return res.status(401)
+        .json({ fail: 'email', token: '' });
+      if (type === 'WRONG_PASS') return res.status(401).json({ fail: 'password', token: '' });
       const token = jwt.sign(email, this.secret);
-      return res.status(200).json({ token });
+      return res.status(200).json({ fail: '', token });
     } catch (error) {
       console.error('Login falhou com o erro:', error);
     }
