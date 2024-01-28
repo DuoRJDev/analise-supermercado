@@ -1,0 +1,53 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "standard-with-typescript",
+        "plugin:react/recommended"
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module",
+        "project": "./tsconfig.json"
+    },
+    "plugins": [
+        "react"
+    ],
+    "rules": {
+        "semi": "off",
+        "@typescript-eslint/semi": [
+            "error",
+            "always"
+        ],
+        "@typescript-eslint/space-before-function-paren": "off"
+    },
+    "overrides": [
+        {
+            "files": [
+                "frontend/src/*.tsx"
+            ],
+            "rules": {
+                "quotes": [
+                    "error",
+                    "single"
+                ],
+                "max-len": [
+                    "error",
+                    {
+                        "code": 90,
+                        "ignoreComments": true,
+                        "ignoreUrls": true,
+                        "ignoreRegExpLiterals": true,
+                        "ignoreStrings": true
+                    }
+                ],
+                "no-magic-numbers": [
+                    "error"
+                ],
+                "import/no-unterminated": "error"
+            }
+        }
+    ]
+}
