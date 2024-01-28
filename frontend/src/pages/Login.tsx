@@ -10,18 +10,30 @@ function Login(): React.ReactElement {
   const [passwordError, setPasswordError] = useState({ valid: false, hint: '' });
   const [navCreateAcc, setNav] = useState(false);
   const [loginStatus, setLoginStatus] = useState('');
-  const [loadingLogin, setLoadingLogin] = useState(false);
   const [loadingSuccessfull, setLoadingSuccess] = useState(false);
 
   const numberRegex = /[^0-9]/;
   const emailRegex = /^[a-z0-9.-_]+@[a-z0-9.-]+\.[a-z]+$/i;
   const specialCharsRegex = /[`!@#$%^&*()_+=[\]{};':"\\|,.<>/?~]/;
 
+  /**
+   * Captura os nomes e valores dos inputs enquanto são preenchidos, realizando verificações de regras de negócio
+   * e liberação da criação de conta quando preenchido corretamente.
+   * @param target - Target do DOM
+   * @returns void
+   */
   const onChangeInput = ({ name, value }: { name: string, value: string }): void => {
     setLogin({ ...login, [name]: value });
     validateInputs(name, value);
   };
 
+  /**
+   * Função que realiza as verificações dos inputs para respeitar regras de negócio.
+   * Facilitando o login do usuário.
+   * @param name - Nome do input
+   * @param value - Valor do input
+   * @returns void
+   */
   const validateInputs = (name: string, value: string): void => {
     switch (name) {
       case 'email':
@@ -39,16 +51,18 @@ function Login(): React.ReactElement {
     }
   };
 
+  /**
+   * Função que realiza o login do usuário.
+   * Gerencia o token e a resposta da api.
+   * @returns Promise void
+   */
   const accountLogin = async (): Promise<void> => {
-    // Precisa capturar Role e 'Fail' no retorno, ajustar no backend
-    // Ajustar para pegar pelo token
     const { email, password } = login;
     const response = await requestLogin({ email, password })
       .then((res) => {
         return res;
       })
       .catch((error) => {
-        console.log('Erro ao efetuar login: ', error);
         return error.response.data;
       });
     switch (response.fail) {
@@ -59,20 +73,17 @@ function Login(): React.ReactElement {
         setLoginStatus('Senha incorreta!');
         break;
       default:
-        setLoginStatus('');
+        setLoginStatus('Login efetuado, aguarde!');
         setToken(response.token);
         saveLocalStorage('token', response.token);
-        setLoginStatus('Login efetuado, aguarde!');
-        setLoadingLogin(true);
         setEmailError({ valid: false, hint: '' });
+        setLoadingSuccess(true);
         break;
     }
   };
 
   // Redirecionamento para a page CreateAccount
   if (navCreateAcc) return <Navigate to="/create-account" />;
-  // Timeout para carregar as variáveis do usuário corretamente
-  if (loadingLogin) setTimeout(() => { setLoadingSuccess(true); }, 3000);
   // Redirecionamento para a page Main após Login efetuado
   if (loadingSuccessfull) return <Navigate to="/main" />;
 
@@ -80,6 +91,7 @@ function Login(): React.ReactElement {
     <div>
       <h2>Faça o Login</h2>
       {loginStatus.length >= 1 ? <h3>{loginStatus}</h3> : null}
+      {/* INPUT EMAIL */}
       <label htmlFor="email">E-mail: </label>
       <input
         type="email"
@@ -97,6 +109,7 @@ function Login(): React.ReactElement {
           : null
       }
       <br />
+      {/* INPUT PASSWORD */}
       <label htmlFor="password">Senha: </label>
       <input
         type="password"
@@ -114,7 +127,7 @@ function Login(): React.ReactElement {
           : null
       }
       <br />
-      {/* ENTRAR */}
+      {/* EFETUAR LOGIN */}
       <button
         type="button"
         data-testid="login-submit-btn"
