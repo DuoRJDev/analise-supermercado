@@ -20,26 +20,6 @@ function Login(): React.ReactElement {
   const emailRegex = /^[a-z0-9.-_]+@[a-z0-9.-]+\.[a-z]+$/i;
   const specialCharsRegex = /[`!@#$%^&*()_+=[\]{};':"\\|,.<>/?~]/;
 
-  // const validateEmail = (emailInput: string): void => {
-  //   const isValidEmail = emailInput.length > 5 && emailRegex.test(emailInput);
-
-  //   if (!isValidEmail) {
-  //     setEmailError({ invalid: true, hint: 'E-mail inválido. Certifique-se de que contém "@" e ".com".' });
-  //   } else {
-  //     setEmailError({ invalid: false, hint: '' });
-  //   }
-  // };
-
-  // const validatePassword = (password: string): void => {
-  //   const isValidPassword = password.length >= 8 && password.length <= 16 && specialCharsRegex.test(password) && numberRegex.test(password);
-
-  //   if (!isValidPassword) {
-  //     setPasswordError({ invalid: true, hint: 'A senha deve conter pelo menos 8 caracteres, máximo de 16, 1 letra maiúscula, 1 caractere especial e 1 caractere numérico.' });
-  //   } else {
-  //     setPasswordError({ invalid: false, hint: '' });
-  //   }
-  // };
-
   const onChangeInput = ({ name, value }: { name: string, value: string }): void => {
     setLogin({ ...login, [name]: value });
     validateInputs(name, value);
@@ -62,24 +42,10 @@ function Login(): React.ReactElement {
     }
   };
 
-  // const handleEmailChange = ({ value }: { value: string }): void => {
-  //   const emailInput = value;
-  //   setEmail(emailInput);
-  //   validateEmail(emailInput);
-  // };
-
-  // const handlePasswordChange = ({ value }: { value: string }): void => {
-  //   const newPassword = value;
-  //   setPassword(newPassword);
-  //   validatePassword(newPassword);
-  // };
-
   const accountLogin = async (): Promise<void> => {
     // Precisa capturar Role e 'Fail' no retorno, ajustar no backend
-    console.log('accountlogin');
     const { email, password } = login;
-    const { token } = await requestLogin({ email, password });
-    const fail = null;
+    const { token, fail } = await requestLogin({ email, password });
     if (fail === 'email') setWrongEmail(true);
     if (fail === 'password') setWrongPass(true);
     setToken(token);
@@ -93,7 +59,7 @@ function Login(): React.ReactElement {
 
   return (
     <div>
-      <h2>Tela de Login</h2>
+      <h2>Faça o Login</h2>
       <label htmlFor="email">E-mail:</label>
       <input
         type="email"

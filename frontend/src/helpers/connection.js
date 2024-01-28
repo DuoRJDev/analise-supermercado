@@ -11,6 +11,12 @@ export const setToken = (token) => {
 };
 
 /**
+ *Função para tirar o registro de token da api
+ */
+export const removeToken = () => {
+  api.defaults.headers.common.Authorization = '';
+};
+/**
  * Função que envia os dados de criação de conta para a api
  * @param body Nome, Sobrenome, Email, Senha, Estado, Região
  * @returns Retorna o token
