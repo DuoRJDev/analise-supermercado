@@ -14,11 +14,11 @@ export default {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      category: {
+      categoryId: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      brand: {
+      brandId: {
         type: DataTypes.INTEGER,
         allowNull: false,
       }

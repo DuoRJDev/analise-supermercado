@@ -20,6 +20,7 @@ Categories.init({
   sequelize: db,
   timestamps: false,
   underscored: false,
+  tableName: 'categories',
 });
 
 export default Categories;
