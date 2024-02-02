@@ -1,3 +1,4 @@
+import ProductsBought from '../database/models/ProductsBought';
 import Brands from '../database/models/Brands';
 import Categories from '../database/models/Categories';
 import Markets from '../database/models/Markets';
@@ -10,36 +11,20 @@ export default class AnalyticService {
   private modelUsers = Users;
   private modelSales = Sales;
   private modelProducts = Products;
+  private modelProductsBought = ProductsBought;
   private modelMarkets = Markets;
   private modelStates = States;
-  private modelCategory = Categories;
-  private modelBrand = Brands;
+  private modelCategories = Categories;
+  private modelBrands = Brands;
   // eslint-disable-next-line max-lines-per-function
-  async getAllProducts(userEmail: string) {
+  async getSalesByUser(userEmail: string) {
     try {
-      const { modelUsers, modelSales, modelProducts,
-        modelMarkets, modelStates, modelCategory, modelBrand } = this;
+      const { modelUsers, modelSales, modelMarkets, modelStates } = this;
       const user = await modelUsers.findOne({ where: { email: userEmail } });
       const sales = await modelSales.findAll({
         where: { userId: user?.dataValues.id },
-        attributes: ['id', 'date', 'price'],
+        attributes: ['id', 'date', 'totalPrice'],
         include: [
-          {
-            model: modelUsers,
-            attributes: ['name', 'surname', 'email'],
-            as: 'user',
-            required: true,
-          },
-          {
-            model: modelProducts,
-            attributes: ['product'],
-            as: 'product',
-            required: true,
-            include: [
-              { model: modelCategory, attributes: ['category'], as: 'category', required: true },
-              { model: modelBrand, attributes: ['brand'], as: 'brand', required: true },
-            ],
-          },
           {
             model: modelMarkets, attributes: ['market'], as: 'market', required: true,
           },
@@ -53,5 +38,27 @@ export default class AnalyticService {
       console.error('Erro ao obter analytics:', error);
       throw error;
     }
+  }
+
+  // eslint-disable-next-line max-lines-per-function
+  async getAllProductsAnalytics() {
+    const { modelProducts, modelProductsBought, modelCategories, modelBrands } = this;
+
+    const allProducts = await modelProductsBought.findAll({
+      attributes: ['unityPrice', 'quantity', 'date'],
+      include: [
+        {
+          model: modelProducts,
+          attributes: ['product'],
+          as: 'product',
+          required: true,
+          include: [
+            { model: modelCategories, attributes: ['category'], as: 'category', required: true },
+            { model: modelBrands, attributes: ['brand'], as: 'brand', required: true },
+          ],
+        },
+      ],
+    });
+    console.log(allProducts);
   }
 }
