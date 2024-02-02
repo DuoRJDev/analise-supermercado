@@ -2,29 +2,27 @@ import { QueryInterface, Sequelize } from 'sequelize';
 
 export default {
   up: async (queryInterface: QueryInterface) => {
-    await queryInterface.bulkInsert('sales',
+    await queryInterface.bulkInsert('productsbought',
       [
         {
-          userId: 1,
+          saleId: 1,
+          productId: 1,
+          unityPrice: 20.00,
+          quantity: 10,
           date: Sequelize.literal('CURRENT_TIMESTAMP'),
-          marketId: 1,
-          stateId: 1,
-          regionId: 1,
-          totalPrice: 200.00,
         },
         {
-          userId: 1,
+          saleId: 2,
+          productId: 2,
+          unityPrice: 10.00,
+          quantity: 15,
           date: Sequelize.literal('CURRENT_TIMESTAMP'),
-          marketId: 1,
-          stateId: 1,
-          regionId: 1,
-          totalPrice: 150.00,
         },
       ],
       {},
     );
   },
   down: async (queryInterface: QueryInterface) => {
-    await queryInterface.bulkDelete('sales', {});
+    await queryInterface.bulkDelete('productsbought', {});
   },
 };

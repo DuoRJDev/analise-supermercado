@@ -9,7 +9,13 @@ export default {
         },
         {
           region: 'Sul',
-        }
+        },
+        {
+          region: 'Leste',
+        },
+        {
+          region: 'Oeste',
+        },
       ],
       {},
     );

@@ -7,7 +7,9 @@ export default {
       id: { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
       productId: { type: DataTypes.INTEGER, allowNull: false },
       saleId: { type: DataTypes.INTEGER, allowNull: false },
-      price: { type: DataTypes.DECIMAL, allowNull: false }
+      unityPrice: { type: DataTypes.DECIMAL, allowNull: false },
+      quantity: { type: DataTypes.INTEGER, allowNull: false },
+      date: { type: DataTypes.DATE, allowNull: false },
     });
   },
   down(queryInterface: QueryInterface) {

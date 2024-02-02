@@ -14,14 +14,18 @@ class ProductsBought extends Model<InferAttributes<ProductsBought>,
   declare id: CreationOptional<number>;
   declare saleId: CreationOptional<number>;
   declare productId: CreationOptional<number>;
-  declare price: CreationOptional<number>;
+  declare unityPrice: CreationOptional<number>;
+  declare quantity: CreationOptional<number>;
+  declare date: CreationOptional<Date>;
 }
 
 ProductsBought.init({
   id: { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
-  saleId: { type: DataTypes.INTEGER, allowNull: true },
-  productId: { type: DataTypes.INTEGER, allowNull: true },
-  price: { type: DataTypes.INTEGER, allowNull: true },
+  saleId: { type: DataTypes.INTEGER, allowNull: false },
+  productId: { type: DataTypes.INTEGER, allowNull: false },
+  unityPrice: { type: DataTypes.INTEGER, allowNull: false },
+  quantity: { type: DataTypes.INTEGER, allowNull: false },
+  date: { type: DataTypes.DATE, allowNull: false },
 }, {
   sequelize: db,
   timestamps: false,
