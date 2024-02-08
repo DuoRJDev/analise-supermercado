@@ -42,23 +42,28 @@ export default class AnalyticService {
 
   // eslint-disable-next-line max-lines-per-function
   async getAllProductsAnalytics() {
-    const { modelProducts, modelProductsBought, modelCategories, modelBrands } = this;
+    try {
+      const { modelProducts, modelProductsBought, modelCategories, modelBrands } = this;
 
-    const allProducts = await modelProductsBought.findAll({
-      attributes: ['unityPrice', 'quantity', 'date'],
-      include: [
-        {
-          model: modelProducts,
-          attributes: ['product'],
-          as: 'product',
-          required: true,
-          include: [
-            { model: modelCategories, attributes: ['category'], as: 'category', required: true },
-            { model: modelBrands, attributes: ['brand'], as: 'brand', required: true },
-          ],
-        },
-      ],
-    });
-    console.log(allProducts);
+      const allProducts = await modelProductsBought.findAll({
+        attributes: ['unityPrice', 'quantity', 'date'],
+        include: [
+          {
+            model: modelProducts,
+            attributes: ['product'],
+            as: 'product',
+            required: true,
+            include: [
+              { model: modelCategories, attributes: ['category'], as: 'category', required: true },
+              { model: modelBrands, attributes: ['brand'], as: 'brand', required: true },
+            ],
+          },
+        ],
+      });
+      console.log(allProducts);
+    } catch (error) {
+      console.error('Erro ao obter analytics:', error);
+      throw error;
+    }
   }
 }
