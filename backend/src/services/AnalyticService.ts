@@ -16,7 +16,7 @@ export default class AnalyticService {
   private modelStates = States;
   private modelCategories = Categories;
   private modelBrands = Brands;
-  private DEFAULT_ERROR_STRING = 'Erro ao obter analytics:';
+  private defaultErrorString = 'Erro ao obter analytics:';
   // eslint-disable-next-line max-lines-per-function
   async getSalesByUser(userEmail: string) {
     try {
@@ -36,7 +36,7 @@ export default class AnalyticService {
       });
       return sales;
     } catch (error) {
-      console.error(this.DEFAULT_ERROR_STRING, error);
+      console.error(this.defaultErrorString, error);
       throw error;
     }
   }
@@ -55,7 +55,7 @@ export default class AnalyticService {
         .map(async (saleId) => modelProductsBought.findAll({ where: { saleId } })));
       return allProducts;
     } catch (error) {
-      console.error(this.DEFAULT_ERROR_STRING, error);
+      console.error(this.defaultErrorString, error);
       throw error;
     }
   }
@@ -82,7 +82,7 @@ export default class AnalyticService {
       });
       console.log(allProducts);
     } catch (error) {
-      console.error(this.DEFAULT_ERROR_STRING, error);
+      console.error(this.defaultErrorString, error);
       throw error;
     }
   }
