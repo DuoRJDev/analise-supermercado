@@ -8,7 +8,12 @@ export default {
           product: 'Achocolatado',
           categoryId: 5,
           brandId: 29,
-        }
+        },
+        {
+          product: 'Achocolatado',
+          categoryId: 5,
+          brandId: 20,
+        },
       ],
       {},
     );

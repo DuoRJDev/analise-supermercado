@@ -23,7 +23,7 @@ ProductsBought.init({
   id: { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
   saleId: { type: DataTypes.INTEGER, allowNull: false },
   productId: { type: DataTypes.INTEGER, allowNull: false },
-  unityPrice: { type: DataTypes.INTEGER, allowNull: false },
+  unityPrice: { type: DataTypes.DECIMAL, allowNull: false },
   quantity: { type: DataTypes.INTEGER, allowNull: false },
   date: { type: DataTypes.DATE, allowNull: false },
 }, {

@@ -8,7 +8,14 @@ export default {
           saleId: 1,
           productId: 1,
           unityPrice: 20.00,
-          quantity: 10,
+          quantity: 9,
+          date: Sequelize.literal('CURRENT_TIMESTAMP'),
+        },
+        {
+          saleId: 1,
+          productId: 2,
+          unityPrice: 10.00,
+          quantity: 2,
           date: Sequelize.literal('CURRENT_TIMESTAMP'),
         },
         {

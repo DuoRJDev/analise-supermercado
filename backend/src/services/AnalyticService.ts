@@ -17,6 +17,7 @@ export default class AnalyticService {
   private modelCategories = Categories;
   private modelBrands = Brands;
   private defaultErrorString = 'Erro ao obter analytics:';
+
   // eslint-disable-next-line max-lines-per-function
   async getSalesByUser(userEmail: string) {
     try {
@@ -41,18 +42,58 @@ export default class AnalyticService {
     }
   }
 
+  // eslint-disable-next-line max-lines-per-function
   async getProductsByUser(userEmail: string) {
     try {
-      const { modelUsers, modelSales, modelProductsBought } = this;
+      const { modelUsers, modelSales,
+        modelProductsBought, modelProducts, modelBrands, modelCategories } = this;
       const user = await modelUsers.findOne({ where: { email: userEmail } });
 
       const sales = (await modelSales.findAll({
         where: { userId: user?.dataValues.id },
         attributes: ['id'],
       })).map((sale) => sale.id);
-
-      const allProducts = await Promise.all(sales
-        .map(async (saleId) => modelProductsBought.findAll({ where: { saleId } })));
+      const allProducts = await modelProductsBought.findAll({
+        where: { saleId: sales },
+        attributes: ['unityPrice', 'quantity', 'date'],
+        include: [
+          {
+            model: modelProducts,
+            attributes: ['product'],
+            as: 'product',
+            required: true,
+            include: [
+              {
+                model: modelBrands, attributes: ['brand'], as: 'brand', required: true,
+              },
+              {
+                model: modelCategories, attributes: ['category'], as: 'category', required: true,
+              },
+            ],
+          },
+        ],
+      });
+      // const allProducts = await Promise.all(sales
+      //   .map((saleId) => modelProductsBought.findAll({
+      //     where: { saleId },
+      //     attributes: ['unityPrice', 'quantity', 'date'],
+      //     include: [
+      //       {
+      //         model: modelProducts,
+      //         attributes: ['product'],
+      //         as: 'product',
+      //         required: true,
+      //         include: [
+      //           {
+      //             model: modelBrands, attributes: ['brand'], as: 'brand', required: true,
+      //           },
+      //           {
+      //             model: modelCategories, attributes: ['category'], as: 'category', required: true,
+      //           },
+      //         ],
+      //       },
+      //     ],
+      //   })));
       return allProducts;
     } catch (error) {
       console.error(this.defaultErrorString, error);
