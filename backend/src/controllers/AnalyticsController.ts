@@ -41,7 +41,7 @@ export default class AnalyticsController {
         return res.status(401).json({ error: 'Token falhou na validação' });
       }
       const products = await this.analyticService.getProductsByUser(email);
-      return res.status(200).json({ ...products });
+      return res.status(200).json({ products });
     } catch (error) {
       console.error('Requisição ao banco falhou com erro:', error);
       return res.status(401).json({ error });
