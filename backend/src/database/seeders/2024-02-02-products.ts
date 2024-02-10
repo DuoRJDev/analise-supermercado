@@ -6,9 +6,14 @@ export default {
       [
         {
           product: 'Achocolatado',
-          category: 5,
-          brand: 29,
-        }
+          categoryId: 5,
+          brandId: 29,
+        },
+        {
+          product: 'Achocolatado',
+          categoryId: 5,
+          brandId: 20,
+        },
       ],
       {},
     );

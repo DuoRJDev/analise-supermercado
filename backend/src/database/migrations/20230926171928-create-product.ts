@@ -4,24 +4,10 @@ import IProducts from '../databaseInterfaces/Products';
 export default {
   up(queryInterface: QueryInterface) {
     return queryInterface.createTable<Model<IProducts>>('products', {
-      id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        primaryKey: true,
-        autoIncrement: true,
-      },
-      product: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      category: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      brand: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      }
+      id: { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
+      product: { type: DataTypes.STRING, allowNull: false },
+      categoryId: { type: DataTypes.INTEGER, allowNull: false },
+      brandId: { type: DataTypes.INTEGER, allowNull: false },
     });
   },
   down(queryInterface: QueryInterface) {

@@ -17,7 +17,7 @@ export default class CreateAccController {
         return res.status(401).json({ message: 'Criação de conta inválida' });
       }
       // Executa o login direto, retornando o token para o frontend
-      const token = jwt.sign({ email: data.email }, this.secret);
+      const token = jwt.sign({ email: data.email }, this.secret, { expiresIn: '30d' });
       return res.status(201).json({ token });
     } catch (error) {
       console.error('Criação de conta retornou erro: ', error);

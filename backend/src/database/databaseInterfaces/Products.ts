@@ -1,6 +1,6 @@
 export default interface IProducts {
   id: number,
   product: string,
-  category: number,
-  brand: number,
+  categoryId: number,
+  brandId: number,
 }

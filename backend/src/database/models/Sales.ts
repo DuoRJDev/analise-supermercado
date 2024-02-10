@@ -10,29 +10,26 @@ import Markets from './Markets';
 import States from './States';
 import Regions from './Regions';
 import Users from './Users';
-import Products from './Products';
-
+// Possível refatoração para nome singular, a table representa todos os valores, mas a model representa 1
 class Sales extends Model<InferAttributes<Sales>,
   InferCreationAttributes<Sales>> {
   declare id: CreationOptional<number>;
-  declare user: CreationOptional<number>;
-  declare product: CreationOptional<number>;
+  declare userId: CreationOptional<number>;
   declare date: CreationOptional<Date>;
-  declare price: CreationOptional<number>;
-  declare market: CreationOptional<number>;
-  declare state: CreationOptional<number>;
-  declare region: CreationOptional<number>;
+  declare marketId: CreationOptional<number>;
+  declare stateId: CreationOptional<number>;
+  declare regionId: CreationOptional<number>;
+  declare totalPrice: CreationOptional<number>;
 }
-
+// Remover a model 'Regions' e adicionar opções de valores para um campo region
 Sales.init({
   id: { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
-  user: { type: DataTypes.INTEGER, allowNull: false },
-  product: { type: DataTypes.INTEGER, allowNull: false },
+  userId: { type: DataTypes.INTEGER, allowNull: false },
   date: { type: DataTypes.DATE, allowNull: false },
-  price: { type: DataTypes.DECIMAL, allowNull: false },
-  market: { type: DataTypes.INTEGER, allowNull: false },
-  state: { type: DataTypes.INTEGER, allowNull: false },
-  region: { type: DataTypes.INTEGER, allowNull: true },
+  marketId: { type: DataTypes.INTEGER, allowNull: false },
+  stateId: { type: DataTypes.INTEGER, allowNull: false },
+  regionId: { type: DataTypes.INTEGER, allowNull: true },
+  totalPrice: { type: DataTypes.DECIMAL, allowNull: false },
 }, {
   sequelize: db,
   timestamps: false,
@@ -40,11 +37,9 @@ Sales.init({
   tableName: 'sales',
 });
 
-// Corrigir chaves estrangeiras seguir a model User já corrigida, migration e seeders -- RETIRAR COMENTÁRIO APÓS CORREÇÃO
-Sales.belongsTo(Users, { foreignKey: 'id', as: 'user' });
-Sales.belongsTo(Products, { foreignKey: 'id', as: 'product' });
-Sales.belongsTo(Markets, { foreignKey: 'id', as: 'market' });
-Sales.belongsTo(States, { foreignKey: 'id', as: 'state' });
-Sales.belongsTo(Regions, { foreignKey: 'id', as: 'region' });
+Sales.belongsTo(Users, { foreignKey: 'userId', as: 'user' });
+Sales.belongsTo(Markets, { foreignKey: 'marketId', as: 'market' });
+Sales.belongsTo(States, { foreignKey: 'stateId', as: 'state' });
+Sales.belongsTo(Regions, { foreignKey: 'regionId', as: 'region' });
 
 export default Sales;

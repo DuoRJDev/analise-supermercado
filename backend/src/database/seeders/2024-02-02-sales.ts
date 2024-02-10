@@ -5,14 +5,21 @@ export default {
     await queryInterface.bulkInsert('sales',
       [
         {
-          user: 1,
-          product: 1,
+          userId: 1,
           date: Sequelize.literal('CURRENT_TIMESTAMP'),
-          price: 20.00,
-          market: 1,
-          state: 1,
-          region: null,
-        }
+          marketId: 1,
+          stateId: 1,
+          regionId: 1,
+          totalPrice: 200.00,
+        },
+        {
+          userId: 1,
+          date: Sequelize.literal('CURRENT_TIMESTAMP'),
+          marketId: 1,
+          stateId: 1,
+          regionId: 1,
+          totalPrice: 150.00,
+        },
       ],
       {},
     );

@@ -20,6 +20,7 @@ Brands.init({
   sequelize: db,
   timestamps: false,
   underscored: false,
+  tableName: 'brands',
 });
 
 export default Brands;

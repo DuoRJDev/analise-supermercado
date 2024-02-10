@@ -9,26 +9,11 @@ export default {
       surname: { type: DataTypes.STRING, allowNull: false },
       email: { type: DataTypes.STRING, allowNull: false },
       password: { type: DataTypes.STRING, allowNull: false },
-      roleId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      stateId: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
-      regionId: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
-      createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-      },
+      roleId: { type: DataTypes.INTEGER, allowNull: false },
+      stateId: { type: DataTypes.INTEGER, allowNull: true },
+      regionId: { type: DataTypes.INTEGER, allowNull: true },
+      createdAt: { type: DataTypes.DATE, allowNull: false },
+      updatedAt: { type: DataTypes.DATE, allowNull: false },
     });
   },
   down(queryInterface: QueryInterface) {

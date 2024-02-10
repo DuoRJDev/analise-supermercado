@@ -1,0 +1,5 @@
+#08/02/2024
+[] - Corrigir models onde há repetição do nome da model para name, tirar a redundância.
+
+#08/02/2024
+[] - Corrigir nome das models para singular, model representa uma entidade e não a tabela inteira. 

@@ -9,7 +9,7 @@ export default {
           name: 'Admin',
           surname: 'Master',
           email: 'admin@admin.com',
-          password: 'Admin!23',
+          password: '$2a$10$VWtCMxDuVRCQlkdqejCtIuVodDH4VMHeZXUlZRHDVY/xHrirzDWly',
           roleId: 1,
           stateId: 1,
           regionId: 1,
